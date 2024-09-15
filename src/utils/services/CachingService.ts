@@ -51,18 +51,19 @@ export class CachingService implements CachingServiceRepository {
     return Promise.resolve(storedValue.data);
   }
 
-  async remember(key: string, callback: () => Promise<any>, expiry: number = 3000): Promise<any> {
-    const storedValue = await this.get(key);
+  async remember(key: string, callback: () => Promise<any>, expiry: number = 3000000): Promise<any> {
+    const storedValue = this.dataSet.get(key);
     if (storedValue !== undefined && storedValue.expiry > Date.now()) {
-      return Promise.resolve(storedValue);
+      return Promise.resolve(storedValue.data);
     }
     const newValue = await callback();
     await this.set(key, newValue, expiry);
     return Promise.resolve(newValue);
   }
 
-  set(key: string, value: any, expiry: number = 3000): Promise<void> {
-    this.dataSet.set(key, { data: value, expiry: Date.now() + expiry });
+  set(key: string, value: any, expiry: number = 3000000): Promise<void> {
+    let cacheObject = { data: value, expiry: Date.now() + expiry };
+    this.dataSet.set(key, cacheObject);
     return Promise.resolve(undefined);
   }
 }
