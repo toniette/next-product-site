@@ -1,0 +1,9 @@
+GET http://localhost:3000/api/users/a85312c0-6b44-495b-b878-9cc31004bbf7
+
+###
+
+GET http://localhost:3000/api/users/a85312c0-6b44-495b-b878-9cc31004bbf7/spends
+
+###
+
+GET http://localhost:3000/api/users/a85312c0-6b44-495b-b878-9cc31004bbf7/orders

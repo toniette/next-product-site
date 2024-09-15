@@ -5,8 +5,16 @@ import { Order } from '@type/orders';
 import { OrderRepository } from '@utils/repositories/OrderRepository';
 
 export class UserRepository implements UserRepositoryInterface {
-  dataSet = new Map(usersLarge.map((user) => [user.id, user]));
-  orderRepository = new OrderRepository();
+  static dataSet: Map<string, User>;
+  static expiresAt = 60 * 60;
+  static lastUpdated: number;
+
+  constructor() {
+    let isExpired = Date.now() - UserRepository.lastUpdated > UserRepository.expiresAt;
+    if (!UserRepository.dataSet || isExpired) {
+      UserRepository.dataSet = new Map(usersLarge.map((user) => [user.id, user]));
+    }
+  }
 
   create(entity: User): Promise<User> {
     throw new Error('Method not implemented.');
@@ -17,11 +25,11 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   get(id: string): Promise<User> {
-    return Promise.resolve(this.dataSet.get(id) as User);
+    return Promise.resolve(UserRepository.dataSet.get(id) as User);
   }
 
   getAll(): Promise<User[]> {
-    return Promise.resolve(Array.from(this.dataSet.values()) as User[]);
+    return Promise.resolve(Array.from(UserRepository.dataSet.values()) as User[]);
   }
 
   getByEmail(email: string): Promise<User | undefined> {
@@ -37,10 +45,12 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   getOrders(id: string): Promise<Order[]> {
-    return Promise.resolve(this.orderRepository.getByUser(id));
+    let orderRepository = new OrderRepository();
+    return Promise.resolve(orderRepository.getByUser(id));
   }
 
   getSpends(id: string): Promise<number> {
-    return Promise.resolve(this.orderRepository.getSpendsByUser(id) || 0);
+    let orderRepository = new OrderRepository();
+    return Promise.resolve(orderRepository.getSpendsByUser(id) || 0);
   }
 }

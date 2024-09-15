@@ -7,14 +7,10 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
   const cache_key = `user_${id}`;
   const cachingService = CachingService.getInstance();
 
-  const user = await cachingService.remember(cache_key, async () => {
+  const userSpendsValue = await cachingService.remember(cache_key, async () => {
     const userRepository = new UserRepository();
-    return await userRepository.get(id);
+    return await userRepository.getSpends(id);
   });
 
-  if (!user) {
-    return NextResponse.json({ message: 'User not found' }, { status: 404 });
-  }
-
-  return NextResponse.json(user, { status: 200 });
+  return NextResponse.json({ value: userSpendsValue });
 }
