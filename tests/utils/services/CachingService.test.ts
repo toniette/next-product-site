@@ -1,46 +1,46 @@
 import { CachingService } from '@utils/services/CachingService';
 
 describe('CachingService', () => {
-  it('should set and get cached data', () => {
+  it('should set and get cached data', async () => {
     // arrange
     const cachingService = CachingService.getInstance();
     const cache_key = 'test_key';
     const cache_value = 'test_value';
 
     // act
-    cachingService.set(cache_key, cache_value);
-    const storedValue = cachingService.get(cache_key);
+    await cachingService.set(cache_key, cache_value);
+    const storedValue = await cachingService.get(cache_key);
 
     // assert
-    expect(storedValue).toBe(cache_value);
+    expect(storedValue).toEqual(cache_value);
   });
 
-  it('should clear cached data', () => {
+  it('should clear cached data', async () => {
     // arrange
     const cachingService = CachingService.getInstance();
     const cache_key = 'test_key';
     const cache_value = 'test_value';
 
     // act
-    cachingService.set(cache_key, cache_value);
-    cachingService.clear();
+    await cachingService.set(cache_key, cache_value);
+    await cachingService.clear();
 
     // assert
-    expect(cachingService.get(cache_key)).toBeUndefined();
+    expect(await cachingService.get(cache_key)).toBeUndefined();
   });
 
-  it('should delete cached data', () => {
+  it('should delete cached data', async () => {
     // arrange
     const cachingService = CachingService.getInstance();
     const cache_key = 'test_key';
     const cache_value = 'test_value';
 
     // act
-    cachingService.set(cache_key, cache_value);
-    cachingService.delete(cache_key);
+    await cachingService.set(cache_key, cache_value);
+    await cachingService.delete(cache_key);
 
     // assert
-    expect(cachingService.get(cache_key)).toBeUndefined();
+    expect(await cachingService.get(cache_key)).toBeUndefined();
   });
 
   it('should set and get cached data with expiry', async () => {
@@ -68,7 +68,7 @@ describe('CachingService', () => {
     await cachingService.forget(cache_key);
 
     // assert
-    expect(cachingService.get(cache_key)).toBeUndefined();
+    expect(await cachingService.get(cache_key)).toBeUndefined();
   });
 
   it('should remember cached data', async () => {
